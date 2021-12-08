@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+    id 'war'
+    id 'org.gretty' version '3.0.6'
+
+}
+
+version '1.0-SNAPSHOT'
+sourceCompatibility = 1.8
+
+repositories {
+    jcenter()
+}
+
+war{
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+    from {
+// all of the library jar files used are to be zipped into the war fil
+        configurations.runtimeClasspath.collect {
+            it.isDirectory() ? it : zipTree(it)
+        } }
+}
+
+// This is required to build the war file successfully
+task stage(dependsOn: ['build', 'clean'])
+build.mustRunAfter clean
+
+dependencies {
+    implementation group: 'com.google.code.gson', name:'gson', version: '2.7'
+    compileOnly group: 'javax.servlet', name: 'javax.servlet-api', version: '4.0.1'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+    runtimeOnly group: 'org.postgresql', name: 'postgresql', version: '42.2.18'
+
+}
+
+test {
+    useJUnitPlatform()
+}
