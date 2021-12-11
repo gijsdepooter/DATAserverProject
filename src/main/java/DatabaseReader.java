@@ -22,7 +22,6 @@ public class DatabaseReader {
                 Float hr_t = rs.getFloat("heartrate");
                 Date date = new Date();
                 Timestamp ts = new Timestamp(date.getTime());
-                //SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
                 try {
                     PreparedStatement query2 = conn.prepareStatement("INSERT INTO hrlive (timerec,heartrate) values (?,?);");
