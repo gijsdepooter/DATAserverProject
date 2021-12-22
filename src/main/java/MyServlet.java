@@ -1,5 +1,4 @@
 import com.google.gson.Gson;
-
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -10,35 +9,39 @@ import java.io.PrintWriter;
 import java.sql.*;
 import java.util.stream.Collectors;
 
+
+
 @WebServlet(urlPatterns={"/HR"},loadOnStartup = 1)
 public class MyServlet extends HttpServlet {
+
+    public static ResultSet RetrieveData() throws Exception{
+        String dbUrl = "jdbc:postgresql://localhost:5432/PatientData";
+        Class.forName("org.postgresql.Driver");
+        Connection conn = DriverManager.getConnection(dbUrl, "postgres", "Surfdude04");
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM hrlive WHERE id=(SELECT max(id) FROM hrlive);");
+        return rs;
+    }
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         PrintWriter out = resp.getWriter();
-        resp.setContentType("text/html");
-        out.println("<html><body>");
-        String dbUrl = "jdbc:postgresql://localhost:5432/PatientData";
-        try
-        {
-            Class.forName("org.postgresql.Driver");
-            Connection conn= DriverManager.getConnection(dbUrl, "postgres","Surfdude04");
-            Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery("select * from hrlive");
-            out.println("<table border=1 width=50% height=50%>");
-            out.println("<tr><th>TIME</th><th>HEART RATE</th></tr>");
-            while (rs.next())
-            {
-                Timestamp tm = rs.getTimestamp("timerec");
-                Float hr = rs.getFloat("heartrate");
-                out.println("<tr><td>"+tm+"</td><td>"+hr+"</td></tr>");
-
-
+        resp.setContentType("application/json");
+        try {
+            ResultSet rs = RetrieveData();
+            while (rs.next()){
+                Patient p = new Patient();
+                p.setPatientID(rs.getInt("patientID"));
+                p.setHR(rs.getInt("heartrate"));
+                p.setTimeRec(rs.getTimestamp("timeRec"));
+                Gson gson = new Gson();
+                String json= gson.toJson(p);
+                out.println(json);
             }
-            out.println("</table>");
-            out.println("</html></body>");
-            conn.close();
-        }catch (Exception e){out.println("error");}
+
+            } catch (Exception e){}
+
     }
 
     @Override

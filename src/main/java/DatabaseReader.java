@@ -19,14 +19,15 @@ public class DatabaseReader {
 
             while (rs.next())
             {
-                Float hr_t = rs.getFloat("heartrate");
+                Integer hr_t = rs.getInt("heartrate");
                 Date date = new Date();
                 Timestamp ts = new Timestamp(date.getTime());
 
+
                 try {
-                    PreparedStatement query2 = conn.prepareStatement("INSERT INTO hrlive (timerec,heartrate) values (?,?);");
+                    PreparedStatement query2 = conn.prepareStatement("INSERT INTO hrlive (timerec,patientID,heartrate) values (?,1663923,?);");
                     query2.setTimestamp(1, ts);
-                    query2.setFloat(2, hr_t);
+                    query2.setInt(2, hr_t);
                     query2.executeUpdate();
                 }catch (SQLException e){
                     System.out.println("Exception while executing update: " + e.getMessage());
@@ -35,7 +36,7 @@ public class DatabaseReader {
 
                 System.out.println(hr_t);
                 try {
-                    TimeUnit.SECONDS.sleep(1);
+                    TimeUnit.SECONDS.sleep(5);
                 } catch (InterruptedException ie) {
                     Thread.currentThread().interrupt();
                 }
