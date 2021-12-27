@@ -14,12 +14,13 @@ import java.util.stream.Collectors;
 @WebServlet(urlPatterns={"/HR"},loadOnStartup = 1)
 public class MyServlet extends HttpServlet {
 
-    public static ResultSet RetrieveData() throws Exception{
+    public static ResultSet RetrieveData(String tblName) throws Exception{
         String dbUrl = "jdbc:postgresql://localhost:5432/PatientData";
         Class.forName("org.postgresql.Driver");
         Connection conn = DriverManager.getConnection(dbUrl, "postgres", "Surfdude04");
         Statement stmt = conn.createStatement();
-        ResultSet rs = stmt.executeQuery("SELECT * FROM hrlive WHERE id=(SELECT max(id) FROM hrlive);");
+        String query = "SELECT * FROM hrlive WHERE id=(SELECT max(id) FROM "+tblName+");";
+        ResultSet rs = stmt.executeQuery(query);
         return rs;
     }
 
@@ -29,7 +30,7 @@ public class MyServlet extends HttpServlet {
         PrintWriter out = resp.getWriter();
         resp.setContentType("application/json");
         try {
-            ResultSet rs = RetrieveData();
+            ResultSet rs = RetrieveData("hrlive");
             while (rs.next()){
                 Patient p = new Patient();
                 p.setPatientID(rs.getInt("patientID"));
