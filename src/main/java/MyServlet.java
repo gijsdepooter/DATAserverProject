@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 
 
-@WebServlet(urlPatterns={"/HR"},loadOnStartup = 1)
+@WebServlet(urlPatterns={"/Login/*"},loadOnStartup = 1)
 public class MyServlet extends HttpServlet {
 
     public static ResultSet RetrieveData(String tblName) throws Exception{
@@ -20,28 +20,48 @@ public class MyServlet extends HttpServlet {
         Connection conn = DriverManager.getConnection(dbUrl, "postgres", "Surfdude04");
         Statement stmt = conn.createStatement();
         String query = "SELECT * FROM hrlive WHERE id=(SELECT max(id) FROM "+tblName+");";
-        ResultSet rs = stmt.executeQuery(query);
-        return rs;
+        return stmt.executeQuery(query);
     }
 
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    public static void createJSON(HttpServletResponse resp, String tblName, String colName) throws Exception{
         PrintWriter out = resp.getWriter();
         resp.setContentType("application/json");
         try {
-            ResultSet rs = RetrieveData("hrlive");
+            ResultSet rs = RetrieveData(tblName);
             while (rs.next()){
                 Patient p = new Patient();
                 p.setPatientID(rs.getInt("patientID"));
-                p.setHR(rs.getInt("heartrate"));
+                p.setHR(rs.getInt(colName));
                 p.setTimeRec(rs.getTimestamp("timeRec"));
                 Gson gson = new Gson();
                 String json= gson.toJson(p);
                 out.println(json);
             }
+        } catch (Exception e){}
+    }
 
-            } catch (Exception e){}
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        System.out.println("Servlet invoked !!");
+        String action = req.getRequestURI();
+        action = action.substring(action.lastIndexOf("/"));
+        System.out.println(action);
+
+        switch (action) {
+            case"/HR":
+                try{
+                createJSON(resp,"hrlive","heartrate");
+                }catch (Exception e){}
+
+            case "/BP":
+                break;
+
+            default:
+
+        }
+
+
 
     }
 
