@@ -4,6 +4,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.*;
@@ -19,8 +20,14 @@ public class MyServlet extends HttpServlet {
         Class.forName("org.postgresql.Driver");
         Connection conn = DriverManager.getConnection(dbUrl, "postgres", "Surfdude04");
         Statement stmt = conn.createStatement();
-        String query = "SELECT * FROM hrlive WHERE id=(SELECT max(id) FROM "+tblName+");";
-        return stmt.executeQuery(query);
+        if (tblName.equals("ecglive")) {
+            String query2 = "SELECT * FROM ecglive ORDER BY id DESC LIMIT 10";//Needs to select multiple entries due to high sampling rate of ECG
+            System.out.println("ecgtable searched");
+            return stmt.executeQuery(query2);
+        }else {
+            String query = "SELECT * FROM " + tblName + " WHERE id=(SELECT max(id) FROM " + tblName + ");";
+            return stmt.executeQuery(query);
+        }
     }
 
     public static void createJSON(HttpServletResponse resp, String tblName, String colName) throws Exception{
@@ -28,16 +35,22 @@ public class MyServlet extends HttpServlet {
         resp.setContentType("application/json");
         try {
             ResultSet rs = RetrieveData(tblName);
+            Patient p = new Patient();
             while (rs.next()){
-                Patient p = new Patient();
                 p.setPatientID(rs.getInt("patientID"));
-                p.setHR(rs.getInt(colName));
                 p.setTimeRec(rs.getTimestamp("timeRec"));
-                Gson gson = new Gson();
-                String json= gson.toJson(p);
-                out.println(json);
+                if(colName.equals("heartrate")){
+                    p.setHR(rs.getInt(colName));//add methods for getting different numbers for different col names
+                }else if(colName.equals("ecg")){
+                    p.setECG(rs.getFloat("ecg"));
+                }
             }
-        } catch (Exception e){}
+            p.PrintPatient();
+            Gson gson = new Gson();
+            String json= gson.toJson(p);
+            out.println(json);
+
+        } catch (Exception e){System.out.println("Exception while making JSON: " + e.getMessage());}
     }
 
 
@@ -51,10 +64,17 @@ public class MyServlet extends HttpServlet {
         switch (action) {
             case"/HR":
                 try{
-                createJSON(resp,"hrlive","heartrate");
+                    createJSON(resp,"hrlive","heartrate");
+
                 }catch (Exception e){}
 
-            case "/BP":
+                break;
+
+            case "/ECG":
+                try{
+                    createJSON(resp,"ecglive","ecg");
+                }catch(Exception e){}
+
                 break;
 
             default:
