@@ -20,11 +20,13 @@ public class MyServlet extends HttpServlet {
         Class.forName("org.postgresql.Driver");
         Connection conn = DriverManager.getConnection(dbUrl, "postgres", "Surfdude04");
         Statement stmt = conn.createStatement();
+
         if (tblName.equals("ecglive")) {
             String query2 = "SELECT * FROM ecglive ORDER BY id DESC LIMIT 10";//Needs to select multiple entries due to high sampling rate of ECG
             System.out.println("ecgtable searched");
             return stmt.executeQuery(query2);
-        }else {
+        }
+        else {
             String query = "SELECT * FROM " + tblName + " WHERE id=(SELECT max(id) FROM " + tblName + ");";
             return stmt.executeQuery(query);
         }
@@ -36,12 +38,15 @@ public class MyServlet extends HttpServlet {
         try {
             ResultSet rs = RetrieveData(tblName);
             Patient p = new Patient();
+
             while (rs.next()){
                 p.setPatientID(rs.getInt("patientID"));
                 p.setTimeRec(rs.getTimestamp("timeRec"));
+
                 if(colName.equals("heartrate")){
                     p.setHR(rs.getInt(colName));//add methods for getting different numbers for different col names
-                }else if(colName.equals("ecg")){
+                }
+                else if(colName.equals("ecg")){
                     p.setECG(rs.getFloat("ecg"));
                 }
             }
@@ -79,6 +84,8 @@ public class MyServlet extends HttpServlet {
 
             default:
 
+                break;
+
         }
 
 
@@ -90,9 +97,12 @@ public class MyServlet extends HttpServlet {
             IOException {
         String reqBody=req.getReader().lines().collect(Collectors.joining(System.lineSeparator()));
         Gson gson = new Gson();
+        Doctor Doc =  gson.fromJson(reqBody,Doctor.class);
+        Doc.Authenticate();
+        Doc.PrintDoctor();
         resp.setContentType("application/json");
         resp.setContentType("text/html");
-        resp.getWriter().write("Thank you client! "+reqBody);
+        resp.getWriter().write("Thank you client! "+reqBody+" The user authentication is: "+Doc.getAuthentication());
     }
 
 

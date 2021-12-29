@@ -4,7 +4,7 @@ import java.util.Vector;
 
 public class Patient {
     private int patientID;
-    private Timestamp timeRec;
+    private Timestamp timeRec;//can potentially set the timestamps to be a vector in case multiple values are being transferred.
     private int HR;
     private Vector<Float> ECG = new Vector<>(10);;
 
