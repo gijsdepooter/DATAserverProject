@@ -3,37 +3,25 @@ import java.sql.Timestamp;
 import java.util.Vector;
 
 public class Patient {
-    private int patientID;
-    private Timestamp timeRec;//can potentially set the timestamps to be a vector in case multiple values are being transferred.
-    private int HR;
-    private Vector<Float> ECG = new Vector<>(10);;
+    private Vector<Integer> patientID = new Vector<>();
+    private Vector<Timestamp> timeRec = new Vector<>();
+    private Vector<Integer> HR = new Vector<>();
+    private Vector<Float> ECG = new Vector<>();;
 
     public void setPatientID(int patientID){
-        this.patientID = patientID;
+        this.patientID.add(patientID);
     }
 
     public void setTimeRec(Timestamp timeRec){
-        this.timeRec = timeRec;
+        this.timeRec.add(timeRec);
     }
 
     public void setHR(int HR){
-        this.HR = HR;
+        this.HR.add(HR);
     }
 
     public void setECG(Float ecg) throws Exception{
         this.ECG.add(ecg);
-    }
-
-    public int getPatientID(){
-        return patientID;
-    }
-
-    public Timestamp getTimeRec(){
-        return timeRec;
-    }
-
-    public int getHR(){
-        return HR;
     }
 
     public void PrintPatient(){
