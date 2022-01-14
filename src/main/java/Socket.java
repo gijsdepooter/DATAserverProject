@@ -5,7 +5,7 @@ public class Socket {
     public void startThreads() {
         new Thread(new Th1()).start();
         new Thread(new Th2()).start();
-        //new Thread(new Th3()).start();
+
 
     }
 
@@ -25,12 +25,6 @@ public class Socket {
         }
     }
 
-    class Th3 implements Runnable {
-        @Override
-        public void run() {
-            DatabaseReader.Read("patient0RR", "rrlive", "c1", 60000, 128937);
-            ;
-        }
-    }
+
 }
 /* end of reference 1 */

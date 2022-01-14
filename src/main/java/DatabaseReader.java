@@ -4,6 +4,8 @@ import java.util.concurrent.TimeUnit;
 
 
 public class DatabaseReader {
+    /*This function takes the values from the raw data tables and puts the physiological
+    values along with other metadata in the live data tables */
     public static void Read(String RawData, String LiveData, String Col, int sampFreq, int PatientID){
         String dbUrl = "jdbc:postgresql://ec2-54-73-68-39.eu-west-1.compute.amazonaws.com:5432/dctpppdsoogu5e";
         try {
@@ -41,12 +43,14 @@ public class DatabaseReader {
             }
             st.close();
         } catch (Exception e) {
+            System.out.println(e);
 
         }
 
     }
 
     public static void ClearTable(String TableName){
+        /* This function empties the live data tables*/
         String dbUrl = "jdbc:postgresql://ec2-54-73-68-39.eu-west-1.compute.amazonaws.com:5432/dctpppdsoogu5e";
         try {
             Class.forName("org.postgresql.Driver");

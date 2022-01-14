@@ -7,5 +7,7 @@ public class Main {
         s.startThreads();
 //        DatabaseReader.ClearTable("ecglive");
 //        DatabaseReader.ClearTable("hrlive");
+
+
     }
 }

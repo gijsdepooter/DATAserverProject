@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class MyServlet extends HttpServlet {
 
     public static ResultSet RetrieveData(String query) throws Exception{
+        //Retrieves data from heroku database when presented with a query
         String dbUrl = "jdbc:postgresql://ec2-54-73-68-39.eu-west-1.compute.amazonaws.com:5432/dctpppdsoogu5e";
         Class.forName("org.postgresql.Driver");
         Connection conn = DriverManager.getConnection(dbUrl, "wtlubuspzbefzf", "6056c0cef2cfcbf15902982f17d7ba4a19158dd1087ecb110fce1aade0e0629b");
@@ -29,6 +30,8 @@ public class MyServlet extends HttpServlet {
     }
 
     public static void createJSON(HttpServletResponse resp, String query, String action) throws Exception{
+        /* This function is responsible for packaging the data from the database
+        in JSON format */
         PrintWriter out = resp.getWriter();
         resp.setContentType("application/json");
         try {
@@ -56,6 +59,7 @@ public class MyServlet extends HttpServlet {
     }
 
     public static void AbnormalVal(HttpServletResponse resp){
+        /* This function retrieves abnormal values from the heartrate database*/
         try {
             String query = "SELECT * FROM hrlive WHERE heartrate>90;";
             createJSON(resp,query,"heartrate");
@@ -65,6 +69,10 @@ public class MyServlet extends HttpServlet {
     }
 
     public static void AverageValues(HttpServletResponse resp, int sampFreq){
+        /* This function makes an average values report of all the data in the live data
+        table for heart rate. It averages every minute of values and then packages the average
+        values into a JSON object.
+         */
         try{
             int size = 0;
 
@@ -108,6 +116,9 @@ public class MyServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        /* This function is responsible for retrieving the correct data for the
+        * specific client request. The switch cases are used to package and send the
+        * different forms of data to the client */
         System.out.println("Servlet invoked !!");
         String action = req.getRequestURI();
         action = action.substring(action.lastIndexOf("/"));
@@ -125,7 +136,7 @@ public class MyServlet extends HttpServlet {
             case "/ECG":
                 try{
 
-                    String query = "SELECT * FROM ecglive ORDER BY id DESC LIMIT 500;";
+                    String query = "SELECT * FROM ecglive ORDER BY id DESC LIMIT 300;";
                     createJSON(resp,query,"ecg");
                 }catch(Exception e){}
 
