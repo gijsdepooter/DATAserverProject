@@ -19,9 +19,9 @@ import java.util.stream.Collectors;
 public class MyServlet extends HttpServlet {
 
     public static ResultSet RetrieveData(String query) throws Exception{
-        String dbUrl = "jdbc:postgresql://localhost:5432/PatientData";
+        String dbUrl = "jdbc:postgresql://ec2-54-73-68-39.eu-west-1.compute.amazonaws.com:5432/dctpppdsoogu5e";
         Class.forName("org.postgresql.Driver");
-        Connection conn = DriverManager.getConnection(dbUrl, "postgres", "Surfdude04");
+        Connection conn = DriverManager.getConnection(dbUrl, "wtlubuspzbefzf", "6056c0cef2cfcbf15902982f17d7ba4a19158dd1087ecb110fce1aade0e0629b");
         Statement stmt = conn.createStatement();
         ResultSet rs = stmt.executeQuery(query);
         conn.close();
@@ -130,6 +130,16 @@ public class MyServlet extends HttpServlet {
                 }catch(Exception e){}
 
                 break;
+
+            case "/RR":
+                try{
+
+                    String query = "SELECT * FROM rrlive WHERE id=(SELECT max(id) FROM rrlive);";
+                    createJSON(resp,query,"respiratoryrate");
+                }catch(Exception e){}
+
+                break;
+
 
             case "/ECGlast":
                 try{

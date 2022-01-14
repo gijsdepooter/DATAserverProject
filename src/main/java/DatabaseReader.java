@@ -5,11 +5,11 @@ import java.util.concurrent.TimeUnit;
 
 public class DatabaseReader {
     public static void Read(String RawData, String LiveData, String Col, int sampFreq, int PatientID){
-        String dbUrl = "jdbc:postgresql://localhost:5432/PatientData";
+        String dbUrl = "jdbc:postgresql://ec2-54-73-68-39.eu-west-1.compute.amazonaws.com:5432/dctpppdsoogu5e";
         try {
             // Registers the driver
             Class.forName("org.postgresql.Driver");
-            Connection conn= DriverManager.getConnection(dbUrl, "postgres","Surfdude04");
+            Connection conn= DriverManager.getConnection(dbUrl, "wtlubuspzbefzf","6056c0cef2cfcbf15902982f17d7ba4a19158dd1087ecb110fce1aade0e0629b");
 
             String query = "SELECT * FROM " +RawData+ ";";
             Statement st = conn.createStatement();
@@ -40,7 +40,6 @@ public class DatabaseReader {
                 }
             }
             st.close();
-            conn.close();
         } catch (Exception e) {
 
         }
@@ -48,10 +47,10 @@ public class DatabaseReader {
     }
 
     public static void ClearTable(String TableName){
-        String dbUrl = "jdbc:postgresql://localhost:5432/PatientData";
+        String dbUrl = "jdbc:postgresql://ec2-54-73-68-39.eu-west-1.compute.amazonaws.com:5432/dctpppdsoogu5e";
         try {
             Class.forName("org.postgresql.Driver");
-            Connection conn = DriverManager.getConnection(dbUrl, "postgres", "Surfdude04");
+            Connection conn = DriverManager.getConnection(dbUrl, "wtlubuspzbefzf", "6056c0cef2cfcbf15902982f17d7ba4a19158dd1087ecb110fce1aade0e0629b");
 
             String query = "DELETE FROM "+TableName+";";
             Statement st = conn.createStatement();
